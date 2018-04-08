@@ -20,7 +20,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -29,5 +29,5 @@
   "devDependencies": {
     "redux-logger": "^3.0.6"
   },
-  "homepage": "https://agentboo.github.io/react-kanban/kanban-normalized"
+  "homepage": "https://agentboo.github.io/react-kanban-normalized"
 }
