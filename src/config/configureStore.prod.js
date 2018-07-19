@@ -1,14 +1,13 @@
 // redux
 import { createStore, applyMiddleware } from 'redux';
-import root from './../store/root';
+import rootReducer from './../store/rootReducer';
 // middlewares
 import thunk from 'redux-thunk';
 
+// createStore's wrapper with all middlewares passed into it  
 
-// NOTE: Create and configure store
-// ============================================================================ //
 const configureStore = (preloadedState) => createStore(
-  root,
+  rootReducer,
   preloadedState,
   applyMiddleware(thunk)
 );

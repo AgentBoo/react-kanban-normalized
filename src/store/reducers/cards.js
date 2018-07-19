@@ -1,33 +1,47 @@
-// constants
-import { actionType } from './../../config/constants';
 // utilities
-// import * as kinematics from './utilities/kinematics';
-import * as logbook from './utilities/cardbook'
-import { updateArray }  from './utilities/housekeeping';
+import { updateObject }  from './housekeeping';
 
 
-// NOTE: Tertiary reducer
-// ============================================================================ //
+// CARDS REDUCER 
+
 // state.cards.collection reducer
 const collectionReducer = (state = {}, action) => {
   switch(action.type){
-    case actionType.ADD_CARD:
-    case actionType.EDIT_CARD:
-      return logbook.updateCollection(state, action)
+    case 'NEW_CARD':
+    case 'UPDATE_CARD':
+      return updateCollection(state, action)
 
-    // case actionType.TRANSIT_CARD:
-      // do not confuse with kinematics.transitCard()
-      // return kinematics.transittedCard(state, action)
+    case 'DELETE_CARD':
+      return removeCard(state, action)
 
-    case actionType.REMOVE_CARD:
-      return logbook.removeCard(state, action)
+    case 'TRANSIT_CARD':
+      const { source, destination } = action 
+      
+      return updateObject(state, {
+        [source]: updateObject(state[source], {
+          luid: destination
+        })
+      }) 
 
-    case actionType.DESTROY_ALL:
+    case 'DESTROY_ALL':
       return {}
 
-    case actionType.REMOVE_LIST:
-    case actionType.RECEIVE_INIT_DATA:
-      return action.data.cards;
+    case 'DELETE_LIST':
+      let cards = Object.assign({}, state)
+      for(const cardId in cards){
+        if(cards[cardId].luid == action.id){
+          delete cards[cardId]
+        }
+      }
+      return cards 
+
+    case 'BULK_UPDATE_CARDS':
+      return updateObject(state, action.data.entities.cards)
+
+    case 'FETCH_KANBAN':
+      return action.data.entities.cards;
+    case 'DESTROY_KANBAN':
+      return {}
 
     default:
       return state;
@@ -35,32 +49,26 @@ const collectionReducer = (state = {}, action) => {
 };
 
 
-// state.cards.index reducer
-const indexReducer = (state = [], action) => {
-  switch(action.type){
-    case actionType.ADD_CARD:
-      return updateArray(state, action.data.result);
-
-    case actionType.REMOVE_CARD:
-      return state.filter((id) => id !== action.id)
-
-    case actionType.DESTROY_ALL:
-      return []
-      
-    case actionType.RECEIVE_INIT_DATA:
-      return Object.keys(action.data.cards);
-
-    default:
-      return state;
-  }
-};
-
-
-// NOTE: Secondary reducer
-// ============================================================================ //
 const cardsReducer = (state = {}, action) => ({
   collection  : collectionReducer(state.collection, action),
-  index       : indexReducer(state.index, action)
 });
 
 export default cardsReducer;
+
+
+// CASE REDUCERS 
+
+const updateCollection = (state, action) => {
+  const { result, entities } = action.data
+
+  return updateObject(state, {
+    [result]: entities.cards[result]
+  })
+};
+
+const removeCard = (state, action) => {
+  const cards = Object.assign({}, state);
+  delete cards[action.id]
+
+  return cards
+};

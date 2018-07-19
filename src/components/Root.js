@@ -1,19 +1,23 @@
 // react
 import React from 'react';
+// redux
+import { Provider } from 'react-redux';
+import configureStore from './../config/configureStore';
+import { receiveInitData } from './../store/actions/requests';
 // components
-import Header from './presentational/sections/Header';
-import Kanban from './presentational/sections/Kanban';
-// import Footer from './presentational/sections/Footer';
+import Kanban from './presentational/Kanban';
 
+const configured = configureStore();
+	  configured.dispatch(receiveInitData('fetch-kanban'))
 
-// ============================================================================ //
-// Root component
-// ============================================================================ //
+export { configured }
+
+/* Root is injected into root div */
+
 const Root = () => (
-  <div>
-    <Header />
+  <Provider store={ configured }>
     <Kanban />
-  </div>
+  </Provider>
 );
 
 export default Root;

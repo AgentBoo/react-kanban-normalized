@@ -5,29 +5,37 @@ import { itemType } from './../../config/constants';
 // redux
 import { connect } from 'react-redux';
 import { displaceCard, transitCard } from './../../store/actions/kinematics';
-import { editCard, removeCard } from './../../store/actions/api';
+import { updateItem as updateCard, deleteItem as deleteCard, bulkUpdate } from './../../store/actions/requests';
 // components
 import CardComponent from './../coupled/Card';
 
+/* CARD CONTAINER */
 
-// ============================================================================ //
-// Card container
-// ============================================================================ //
-// NOTE: React-DnD
-// DRAG SOURCE
+// react-dnd DRAG SOURCE
 const dragSourceSpec = {
   beginDrag(props, monitor){
     const dragSource = {
       id     : props.id,
+      origin : props.luid,
       luid   : props.luid,
-      status : props.status
     }
     return dragSource
   },
+
+  endDrag(props, monitor){
+      console.log(monitor.getDropResult())
+      return props.bulkUpdate('update-cards', { 
+        source: 'cards',
+        origin: monitor.getItem().origin,
+        destination: monitor.getItem().luid  
+      })
+  },
+
+
   // without explicitely specifying isDragging(), opacity changes will not work during transitCard()
   isDragging(props, monitor){
     return props.id === monitor.getItem().id
-  }
+  },
 };
 
 const collectDragProps = (connector, monitor) => ({
@@ -36,28 +44,28 @@ const collectDragProps = (connector, monitor) => ({
 });
 
 
-// DROP TARGET
+// react-dnd DROP TARGET
 const dropTargetSpec = {
-  canDrop(props, monitor){
-    const card = monitor.getItem()
-    return card.status === 'suggested' || props.status !== 'suggested' || props.luid !== 'default'
+  drop(props, monitor){
+    const dropTarget = { 
+      id: props.id, 
+      type: 'card' 
+    }
+    return dropTarget 
   },
 
   hover(props, monitor){
     const card = monitor.getItem()
 
-    if(card.id === props.id || !monitor.canDrop()){
-      return
+    if(card.id === props.id){
+      return 
     }
 
     if(card.luid === props.luid){
-      props.displaceCard(card.luid, card.id, props.id)
-      return
+      return props.displaceCard(card.luid, card.id, props.id)
     } else {
       props.transitCard(card.luid, card.id, props.id, props.luid)
-      props.editCard({ luid: card.luid, id: card.id, to: props.luid })
-      monitor.getItem().luid = props.luid
-      return
+      return monitor.getItem().luid = props.luid
     }
   }
 };
@@ -67,17 +75,18 @@ const collectDropProps = (connector, monitor) => ({
 });
 
 
-// NOTE: Redux
+// redux
 const mapDispatchToProps = {
   displaceCard,
-  editCard,
-  removeCard,
-  transitCard
+  transitCard,
+  updateCard,
+  deleteCard,
+  bulkUpdate
 };
 
-// ============================================================================ //
-let Card = DragSource(itemType.CARD, dragSourceSpec, collectDragProps)(CardComponent);
-    Card = DropTarget(itemType.CARD, dropTargetSpec, collectDropProps)(Card);
+
+let Card = DropTarget(itemType.CARD, dropTargetSpec, collectDropProps)(CardComponent);
+    Card = DragSource(itemType.CARD, dragSourceSpec, collectDragProps)(Card);
     Card = connect(null, mapDispatchToProps)(Card);
 
 export default Card;

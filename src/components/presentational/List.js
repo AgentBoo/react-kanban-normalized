@@ -6,29 +6,32 @@ import { Button, Glyphicon } from 'react-bootstrap';
 import { EditableLine } from './../toolbox/EditableLine';
 import { CardAssistant } from './../coupled/CardAssistant';
 
+/* LIST COMPONENT */
 
-// ============================================================================ //
-// List component
-// ============================================================================ //
 class List extends Component {
   renderCard = (card) => (
     <Card
        key={ card.id }
        id= { card.id }
        luid={ card.luid }
+       text={ card.text }
        { ...card } />
   );
 
   // pass down
-  editList = (value) => this.props.editList({ id: this.props.id, label: value  });
-  removeList = () => this.props.removeList({ id: this.props.id });
+  editList = (value) => this.props.updateList('update-list', { 
+    id: this.props.id, 
+    label: value  
+  });
+  removeList = () => this.props.deleteList({ 
+    id: this.props.id 
+  });
 
 
   render(){
     const { connectDragSource, connectDropTarget, isDragging } = this.props;
     const { cards, label } = this.props;
-    // arrow syntax to retain -this- context
-    const cardsload = cards.length ? cards.map((card) => this.renderCard(card)) : null;
+    const cardsload = cards.map((card) => this.renderCard(card));
     const draggingStyle = isDragging ? 'list is-dragging' : 'list';
 
     return connectDragSource(

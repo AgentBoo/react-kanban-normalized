@@ -2,28 +2,26 @@
 import { actionType } from './../../config/constants';
 
 
-// NOTE: KINEMATICS ACTIONS
-// ============================================================================ //
-// LIST
+/* OBJECT MOVING ACTION CREATORS */
+
 export const displaceList = (fromDragSourceId, overDropTargetId) => ({
-  type        : actionType.DISPLACE_LIST,
+  type        : actionType['displace-list'],
   origin      : fromDragSourceId,
   destination : overDropTargetId
 });
 
-
-// CARD
 export const displaceCard = (fromListId, fromDragSourceId, overDropTargetId) => ({
-  type        : actionType.DISPLACE_CARD,
+  type        : actionType['displace-card'],
   origin      : fromListId,
   source      : fromDragSourceId,
   target      : overDropTargetId
 });
 
 export const transitCard = (fromListId, fromDragSourceId, overDropTargetId = null, intoListId) => ({
-  type        : actionType.TRANSIT_CARD,
+  type        : actionType['transit-card'],
   origin      : fromListId,
   source      : fromDragSourceId,
   target      : overDropTargetId,
   destination : intoListId
 });
+

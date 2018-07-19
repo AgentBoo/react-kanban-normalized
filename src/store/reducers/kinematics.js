@@ -2,9 +2,8 @@
 import { updateObject }  from './housekeeping'
 
 
-// NOTE: Quartenary (case) reducers
-// ============================================================================ //
-// DISPLACE LIST
+// CASE REDUCERS 
+
 export const displaceList = (state, action) => {
   const { origin, destination } = action;
 
@@ -13,12 +12,11 @@ export const displaceList = (state, action) => {
         destinationIdx = lists.indexOf(destination),
         displaced = lists.splice(originIdx, 1)[0];
   lists.splice(destinationIdx, 0, displaced);
-
+  console.log(lists)
   return lists
 };
 
 
-// DISPLACE CARD
 export const displaceCard = (state, action) => {
   const { origin, source, target } = action;
 
@@ -34,7 +32,6 @@ export const displaceCard = (state, action) => {
 };
 
 
-// TRANSIT CARD
 // state: state.lists.collection
 export const transitCard = (state, action) => {
   const { origin, source, target, destination } = action;
@@ -52,12 +49,3 @@ export const transitCard = (state, action) => {
   })
 };
 
-// state: state.cards.collection
-// export const transittedCard = (state, action) => {
-//   const { source, destination } = action;
-//
-//   const card = Object.assign({}, state[source])
-//         card.luid = destination;
-//
-//   return updateObject(state, { [source]: card })
-// };

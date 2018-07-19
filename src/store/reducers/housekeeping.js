@@ -1,6 +1,5 @@
-// ============================================================================ //
-// UTILITY FUNCTIONS
-// ============================================================================ //
+// Utilities 
+
 // Encapsulate Object.assign
 export const updateObject = (current, updates) => Object.assign({}, current, updates)
 

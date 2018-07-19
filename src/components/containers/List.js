@@ -4,25 +4,29 @@ import { DragSource, DropTarget } from 'react-dnd';
 import { itemType } from './../../config/constants';
 // redux
 import { connect } from 'react-redux';
-import { myCards } from './../../store/root';
+import { myCards } from './../../store/selectors';
 import { displaceList, transitCard } from './../../store/actions/kinematics';
-import { editCard, editList, removeList } from './../../store/actions/api';
+import { updateItem as updateList, deleteItem as deleteList, bulkUpdate } from './../../store/actions/requests';
 // components
 import ListComponent from './../presentational/List';
 
+/* LIST CONTAINER */
 
-// ============================================================================ //
-// List container
-// ============================================================================ //
-// NOTE: React-DnD
-// DRAG SOURCE
+// react-dnd DRAG SOURCE
 const dragSourceSpec = {
   beginDrag(props, monitor){
-    const dragSource = {
-      id: props.id
-    }
+    const dragSource = { id: props.id }
     return dragSource
-  }
+  }, 
+
+  endDrag(props, monitor){
+    console.log(monitor.getDropResult())
+    return props.bulkUpdate('update-lists', { source: 'lists' })
+  },
+
+  isDragging(props, monitor){
+    return props.id === monitor.getItem().id
+  },
 };
 
 const collectDragProps = (connector, monitor) => ({
@@ -31,13 +35,14 @@ const collectDragProps = (connector, monitor) => ({
 });
 
 
-// DROP TARGET
-const dropTargetSpec = {
+// react-dnd DROP TARGET
+const dropTargetSpec = { 
   drop(props, monitor){
-    const dropTarget = {
-      id: props.id
+    const dropTarget = { 
+      id: props.id, 
+      type: 'list' 
     }
-    return dropTarget
+    return dropTarget 
   },
 
   hover(props, monitor){
@@ -48,16 +53,13 @@ const dropTargetSpec = {
       return
     }
 
-    if(dragSourceType === itemType.LIST){
-      props.displaceList(dragSource.id, props.id)
-      return
+    if(dragSourceType === itemType.LIST && dragSource.id !== props.id){
+      return props.displaceList(dragSource.id, props.id)
     }
 
     if(dragSourceType === itemType.CARD && dragSource.luid !== props.id && monitor.isOver({ shallow: true })){
       props.transitCard(dragSource.luid, dragSource.id, null, props.id)
-      props.editCard({ luid: dragSource.luid, id: dragSource.id, to: props.id })
-      monitor.getItem().luid = props.id
-      return
+      return monitor.getItem().luid = props.id
     }
   }
 };
@@ -67,21 +69,22 @@ const collectDropProps = (connector, monitor) => ({
 });
 
 
-// NOTE: Redux
+// redux
 const mapStateToProps = (state, intrinsic) => ({
   cards: myCards(state, intrinsic.id)
 });
+
 const mapDispatchToProps = {
   displaceList,
-  editList,
-  removeList,
-  editCard,
-  transitCard
+  transitCard,
+  updateList,
+  deleteList,
+  bulkUpdate
 };
 
-// ============================================================================ //
-let List = DragSource(itemType.LIST, dragSourceSpec, collectDragProps)(ListComponent);
-    List = DropTarget([itemType.LIST, itemType.CARD], dropTargetSpec, collectDropProps)(List);
+
+let List = DropTarget([itemType.LIST, itemType.CARD], dropTargetSpec, collectDropProps)(ListComponent);
+    List = DragSource(itemType.LIST, dragSourceSpec, collectDragProps)(List);
     List = connect(mapStateToProps, mapDispatchToProps)(List);
 
 export default List;

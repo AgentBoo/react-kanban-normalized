@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 // redux
 import { connect } from 'react-redux';
-import { addCard } from './../../store/actions/api';
+import { newItem as newCard } from './../../store/actions/requests';
 // components
 import { Button, Glyphicon } from 'react-bootstrap';
 
@@ -12,9 +12,8 @@ import { Button, Glyphicon } from 'react-bootstrap';
 // 2* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
 
 
-// ============================================================================ //
-// Controlled one-field form with switchable visibility
-// ============================================================================ //
+/* Controlled one-field form with switchable visibility */
+
 export class CardAssistant extends Component{
   constructor(props){
     super(props);
@@ -60,7 +59,7 @@ export class CardAssistant extends Component{
     }
 
     if(this.state.value.length && this.passesValidation(this.state.value.trim())){
-       this.props.addCard({ text: this.state.value, luid: this.props.luid })
+       this.props.newCard('new-card', { text: this.state.value, luid: this.props.luid })
     }
 
     this.cancelTyping()
@@ -122,6 +121,6 @@ CardAssistant.defaultProps = {
 
 
 // NOTE: Redux
-CardAssistant = connect(null, { addCard })(CardAssistant);
+CardAssistant = connect(null, { newCard })(CardAssistant);
 
 export default CardAssistant;

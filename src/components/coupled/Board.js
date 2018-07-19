@@ -5,33 +5,22 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 // redux
 import { connect } from 'react-redux';
-import { passInitData, receiveInitData } from './../../store/actions/api';
+import { getLists } from './../../store/selectors';
 // components
 import List from './../containers/List';
 import ListAssistant from './ListAssistant';
 
 
-// ============================================================================ //
-// Board component
-// ============================================================================ //
-class Board extends Component {
-  componentDidMount(){
-    if(this.props.init){
-      return this.props.passInitData()
-    }
-      return this.props.receiveInitData()
-  };
+/* KANBAN COMPONENT */
 
-  renderList = ({ id, label, prim }) => (
+class Board extends Component {
+  renderList = ({ id, label }) => (
     <List key={ id } id={ id } label={ label } />
   );
 
-
   render(){
-    const { index, collection: lists } = this.props.lists;
-    // arrow syntax to retain -this- context
-    const listsload = index.length ? index.map((id) => this.renderList(lists[id])) : null;
-
+    const listsload = this.props.lists.map(list => this.renderList(list))
+ 
     return (
       <section className='board'>
 
@@ -45,14 +34,15 @@ class Board extends Component {
 };
 
 
-// ============================================================================ //
-// Board container
-// ============================================================================ //
-// NOTE: Redux
-const mapStateToProps = (state) => ({ lists: state.lists })
+/* KANBAN CONTAINER */
 
-// ============================================================================ //
+// redux
+const mapStateToProps = (state) => ({ 
+  lists: getLists(state)
+})
+
+
 Board = DragDropContext(HTML5Backend)(Board);
-Board = connect(mapStateToProps, { receiveInitData })(Board);
+Board = connect(mapStateToProps)(Board);
 
 export default Board;

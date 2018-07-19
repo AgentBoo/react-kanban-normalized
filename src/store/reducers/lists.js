@@ -1,38 +1,43 @@
-// constants
-import { actionType } from './../../config/constants';
 // utilities
-import * as kinematics from './utilities/kinematics';
-import * as logbook from './utilities/listbook'
-import { updateArray } from './utilities/housekeeping';
+import { updateObject, updateArray } from './housekeeping';
+import * as kinematics from './kinematics';
 
 
-// NOTE: Tertiary reducers
-// ============================================================================ //
+// LISTS REDUCER 
+
 // state.lists.collection reducer
 const collectionReducer = (state = {}, action) => {
   switch(action.type){
-    case actionType.ADD_LIST:
-    case actionType.EDIT_LIST:
-      return logbook.updateCollection(state, action)
+    case 'NEW_LIST':
+    case 'UPDATE_LIST':
+      return updateCollection(state, action)
 
-    case actionType.ADD_CARD:
-      return logbook.addCardToList(state, action)
+    case 'DELETE_LIST':
+      return deleteList(state, action)
 
-    case actionType.DISPLACE_CARD:
+    case 'NEW_CARD':
+      return addCardToList(state, action)
+
+    case 'DELETE_CARD':
+      return removeCardFromList(state, action);
+
+    case 'DISPLACE_CARD':
       return kinematics.displaceCard(state, action);
 
-    case actionType.TRANSIT_CARD:
+    case 'TRANSIT_CARD':
       return kinematics.transitCard(state, action);
 
-    case actionType.REMOVE_CARD:
-      return logbook.removeCardFromList(state, action);
-
-    case actionType.DESTROY_ALL:
+    case 'DESTROY_ALL':
       return {}
 
-    case actionType.REMOVE_LIST:
-    case actionType.RECEIVE_INIT_DATA:
-      return action.data.lists;
+    case 'BULK_UPDATE_LISTS':
+      return updateObject(state, action.data.entities.lists)
+      
+    case 'FETCH_KANBAN':
+      return action.data.entities.lists;
+
+    case 'DESTROY_KANBAN':
+      return {}
 
     default:
       return state;
@@ -43,18 +48,19 @@ const collectionReducer = (state = {}, action) => {
 // state.lists.index reducer
 const indexReducer = (state = [], action) => {
   switch(action.type){
-    case actionType.ADD_LIST:
+    case 'NEW_LIST':
       return updateArray(state, action.data.result)
+    case 'DELETE_LIST':
+      return state.map(listId => listId !== action.id)
 
-    case actionType.DISPLACE_LIST:
-      return kinematics.displaceList(state, action);
+    case 'DISPLACE_LIST':
+      return kinematics.displaceList(state, action)
 
-    case actionType.DESTROY_ALL:
+    case 'DESTROY_KANBAN':
       return []
       
-    case actionType.REMOVE_LIST:
-    case actionType.RECEIVE_INIT_DATA:
-      return Object.keys(action.data.lists);
+    case 'FETCH_KANBAN':
+      return action.data.result;
 
     default:
       return state;
@@ -62,11 +68,49 @@ const indexReducer = (state = [], action) => {
 };
 
 
-// NOTE: Secondary reducer
-// ============================================================================ //
 const listsReducer = (state = {}, action) => ({
   collection  : collectionReducer(state.collection, action),
   index       : indexReducer(state.index, action)
 });
 
 export default listsReducer;
+
+
+// CASE REDUCERS 
+
+export const updateCollection = (state, action) => {
+  const { result, entities } = action.data;
+
+  return updateObject(state, {
+    [result]: entities.lists[result]
+  })
+};
+
+export const deleteList = (state, action) => {
+  let next = Object.assign({}, state)
+
+  delete next[action.id]
+  return next 
+}
+
+export const addCardToList = (state, action) => {
+  const { result } = action.data;
+  const { luid } = action.data.entities.cards[result] 
+
+  return updateObject(state, {
+    [luid]: updateObject(state[luid], {
+      cards: updateArray(state[luid].cards, result)
+    })
+  })
+};
+
+export const removeCardFromList = (state, action) => {
+  const { luid, id } = action;
+
+  const cards = state[luid].cards.map(cardId => cardId !== id)
+  return updateObject(state, {
+    [luid]: updateObject(state[luid], {
+      cards: cards 
+    })
+  })
+};

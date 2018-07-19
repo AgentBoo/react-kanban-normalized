@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 // redux
 import { connect } from 'react-redux';
-import { addList } from './../../store/actions/api';
+import { newItem as newList } from './../../store/actions/requests';
 // components
 import { Button, Glyphicon } from 'react-bootstrap';
 
@@ -12,9 +12,8 @@ import { Button, Glyphicon } from 'react-bootstrap';
 // 2* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
 
 
-// ============================================================================ //
-// Controlled one-field form with switchable visibility
-// ============================================================================ //
+/* Controlled one-field form with switchable visibility */
+
 export class ListAssistant extends Component{
   constructor(props){
     super(props);
@@ -60,7 +59,7 @@ export class ListAssistant extends Component{
     }
 
     if(this.state.value.length && this.passesValidation(this.state.value.trim())){
-       this.props.addList({ label: this.state.value})
+       this.props.newList('new-list', { label: this.state.value})
     }
 
     this.cancelTyping()
@@ -121,6 +120,6 @@ ListAssistant.defaultProps = {
 
 
 // NOTE: Redux
-ListAssistant = connect(null, { addList })(ListAssistant);
+ListAssistant = connect(null, { newList })(ListAssistant);
 
 export default ListAssistant;
