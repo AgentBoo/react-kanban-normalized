@@ -19,8 +19,7 @@ const dragSourceSpec = {
     return dragSource
   }, 
 
-  endDrag(props, monitor){
-    console.log(monitor.getDropResult())
+  endDrag(props, monitor, component){
     return props.bulkUpdate('update-lists', { source: 'lists' })
   },
 
@@ -48,13 +47,13 @@ const dropTargetSpec = {
   hover(props, monitor){
     const dragSource = monitor.getItem();
     const dragSourceType = monitor.getItemType();
-
     if(dragSourceType === itemType.LIST && dragSource.id === props.id){
       return
     }
 
     if(dragSourceType === itemType.LIST && dragSource.id !== props.id){
-      return props.displaceList(dragSource.id, props.id)
+      return window.requestAnimationFrame(() => 
+        props.displaceList(dragSource.id, props.id))
     }
 
     if(dragSourceType === itemType.CARD && dragSource.luid !== props.id && monitor.isOver({ shallow: true })){

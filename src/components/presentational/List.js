@@ -32,11 +32,10 @@ class List extends Component {
     const { connectDragSource, connectDropTarget, isDragging } = this.props;
     const { cards, label } = this.props;
     const cardsload = cards.map((card) => this.renderCard(card));
-    const draggingStyle = isDragging ? 'list is-dragging' : 'list';
-
+   
     return connectDragSource(
       connectDropTarget(
-        <div className={ draggingStyle }>
+        <div className={ isDragging ? 'list low-opacity' : 'list'}>
           <div className='list-header'>
             <EditableLine
                altclassName='form-control transparent pointer'

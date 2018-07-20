@@ -7,13 +7,6 @@ import { updateObject }  from './housekeeping';
 // state.cards.collection reducer
 const collectionReducer = (state = {}, action) => {
   switch(action.type){
-    case 'NEW_CARD':
-    case 'UPDATE_CARD':
-      return updateCollection(state, action)
-
-    case 'DELETE_CARD':
-      return removeCard(state, action)
-
     case 'TRANSIT_CARD':
       const { source, destination } = action 
       
@@ -23,23 +16,28 @@ const collectionReducer = (state = {}, action) => {
         })
       }) 
 
-    case 'DESTROY_ALL':
-      return {}
+    case 'NEW_CARD':
+    case 'UPDATE_CARD':
+      return updateCollection(state, action)
 
-    case 'DELETE_LIST':
-      let cards = Object.assign({}, state)
-      for(const cardId in cards){
-        if(cards[cardId].luid == action.id){
-          delete cards[cardId]
-        }
-      }
-      return cards 
+    case 'DELETE_CARD':
+      return removeCard(state, action) 
 
     case 'BULK_UPDATE_CARDS':
       return updateObject(state, action.data.entities.cards)
+    
+    case 'DELETE_LIST':
+      let cards = Object.assign({}, state)
+      for(const cardId in cards){
+        if(cards[cardId].luid === action.id){
+          delete cards[cardId]
+        }
+      }
+      return cards
 
     case 'FETCH_KANBAN':
       return action.data.entities.cards;
+
     case 'DESTROY_KANBAN':
       return {}
 

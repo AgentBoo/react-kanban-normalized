@@ -23,7 +23,6 @@ const dragSourceSpec = {
   },
 
   endDrag(props, monitor){
-      console.log(monitor.getDropResult())
       return props.bulkUpdate('update-cards', { 
         source: 'cards',
         origin: monitor.getItem().origin,
@@ -62,7 +61,8 @@ const dropTargetSpec = {
     }
 
     if(card.luid === props.luid){
-      return props.displaceCard(card.luid, card.id, props.id)
+      return window.requestAnimationFrame(() => 
+        props.displaceCard(card.luid, card.id, props.id))
     } else {
       props.transitCard(card.luid, card.id, props.id, props.luid)
       return monitor.getItem().luid = props.luid

@@ -21,11 +21,10 @@ class Card extends Component {
 
   render(){
     const { text, isDragging, connectDragSource, connectDropTarget } = this.props;
-    const draggingStyle = isDragging ? 'card is-dragging' : 'card'
 
     return connectDragSource(
       connectDropTarget(
-        <div className={ draggingStyle }>
+        <div className={ isDragging ? 'card low-opacity' : 'card'}>
           <div className='card-header'>
             <Button
                bsSize='xs'
