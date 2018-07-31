@@ -2,14 +2,14 @@
 import React from 'react';
 // redux
 import { connect } from 'react-redux';
-import { destroyAll } from './../../store/actions/requests'
+import { deleteAll } from './../../store/actions/requests'
 // components
 import { Button } from 'react-bootstrap';
 import Board from './../coupled/Board';
 
 /* KANBAN COMPONENT */
 
-let Kanban = ({ destroyAll }) => (
+let Kanban = ({ deleteAll }) => (
   <div>
   	  <header className='root-header'>
 	    <Button bsStyle='primary'>
@@ -17,7 +17,7 @@ let Kanban = ({ destroyAll }) => (
 	    </Button>
 	    <Button
 	       bsStyle='primary'
-	       onClick={() => destroyAll('destroy-kanban')}>
+	       onClick={() => deleteAll('delete-kanban')}>
 	       Destroy All Evidence
 	    </Button>
 	  </header>
@@ -27,5 +27,5 @@ let Kanban = ({ destroyAll }) => (
   </div>
 );
 
-Kanban = connect(null, { destroyAll })(Kanban)
+Kanban = connect(null, { deleteAll })(Kanban)
 export default Kanban;

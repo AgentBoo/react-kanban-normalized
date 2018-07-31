@@ -9,173 +9,145 @@ import Schemas from './../../config/normalizrSchemas';
 import { endpoint, actionType } from './../../config/constants';
 import { getIsFetching } from './../selectors';
 
+// PAGE LOADERS AND FLASH MESSAGES 
 
-// DATA REQUESTS AND RESPONSES 
-
+// let redux know fetching is in progress
 const dataRequest = () => ({
 	type: actionType['data-request']
 })
 
+// send a success flash message to the store
 const dataSuccess = (message = 'Successfully fetched data') => ({
 	type: actionType['data-success'],
 	message: message 
 })
 
-const dataFailure = (message) => ({
+// send a failure flash message to the store 
+const dataFailure = (message = 'Something went wrong') => ({
 	type: actionType['data-failure'],
-	message: message || 'Something went wrong'
+	message: message
 })
 
 
 // FETCH REQUESTS 
 
+// fetch kanban and save to store 
 export const receiveInitData = (urlpattern) => (dispatch) => {
-	const url = endpoint[urlpattern]
-	const opt = {}
-
-	const success = (resjson) => {
-		dispatch(dataSuccess())
-		return dispatch({
-			type: actionType[urlpattern],
-			data: normalize(resjson, Schemas[urlpattern])
-		})
-	}
-
-	const failure = (error) => {
-		return dispatch(dataFailure(error))
-	}
-
 	dispatch(dataRequest())
-	return receiveData(url, opt, success, failure)
-}
-
-
-export const newItem = (urlpattern, item) => {
-	return sendRequest('POST', urlpattern, item) 
-}
-
-export const updateItem = (urlpattern, item) => {
-	return sendRequest('PATCH', urlpattern, item) 
-}
-
-export const deleteItem = (urlpattern, item) => (dispatch) => {
-	const url = endpoint[urlpattern]
-	const opt = {
-		method: 'DELETE',
-		body: JSON.stringify(item)
-	}
 
 	const success = (resjson) => dispatch({
 		type: actionType[urlpattern],
-		id: item.id 
+		data: normalize(resjson, Schemas[urlpattern])
 	})
 
-	const failure =  (error) => dispatch(dataFailure(error))
-	dispatch(dataRequest())
-	return receiveData(url, opt, success, failure)
+	const failure = (error) => dispatch(dataFailure(error))
+
+	return fetchData(endpoint[urlpattern], {}, success, failure)
 }
 
-export const bulkUpdate = (urlpattern, item) => (dispatch, getState) => {
+// destroy everything in kanban
+export const deleteAll = (urlpattern) => (dispatch, getState) => {
 	if(getIsFetching(getState())){
 		return 
 	}
 
-	// check for status only, do not update state with data 
+	dispatch(dataRequest())
+
+	const success = (resjson) => dispatch({ 
+		type: actionType[urlpattern],
+		message: resjson 
+	})
+
+	const failure = (error) => dispatch(dataFailure(error))
+
+	return fetchData(endpoint[urlpattern], {}, success, failure)
+}
+
+
+// CRUD actions
+export const newItem = (urlpattern, item) => {
+	return fetchRequest('POST', urlpattern, item) 
+};
+
+export const updateItem = (urlpattern, item) => {
+	return fetchRequest('PATCH', urlpattern, item) 
+};
+
+export const deleteItem = (urlpattern, item) => {
+	return fetchRequest('DELETE', urlpattern, item, 'Item deleted!')
+};
+
+export const bulkUpdate = (urlpattern, item) => (dispatch, getState) => {
+	/*  Bulk update data on the server with current data in the store. 
+		Django will send back a list of updated items, 
+		so do not update the store with
+	*/
+
+	if(getIsFetching(getState())){
+		return 
+	}
+
+	dispatch(dataRequest())
+	let payload = []
+
 	if(item.source === 'lists'){
-		const { index } = getState().lists
-		
-		const updatedLists = index.map((id, index) => ({
+		payload = getState().lists.index.map((id, index) => ({
 			id: id,
 			coord: index  
 		}))
-		const url = endpoint[urlpattern]
-		const options = {
-			method: 'PATCH',
-			body: JSON.stringify(updatedLists),
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json; charset=utf-8',
-				'X-CSRFToken': Cookies.get('csrftoken')
-			}
-		}
-
-		dispatch(dataRequest())
-
-		const success = (resjson) => dispatch({
-			type: actionType[urlpattern],
-			data: normalize(resjson, Schemas[urlpattern])
-
-		})
-		const failure = (error) => dispatch(dataFailure(error))
-		return receiveData(url, options, success, failure)
 
 	} else if(item.source === 'cards'){
+		const { collection } = getState().lists 
+
 		if(item.origin !== item.destination){
-			let ocards = getState().lists.collection[item.origin].cards.map((id, index) => ({
+			let ocards = collection[item.origin].cards.map((id, index) => ({
 				id: id, 
 				luid: item.origin, 
 				coord: index
 			}))
-			let dcards = getState().lists.collection[item.destination].cards.map((id, index) => ({
+			let dcards = collection[item.destination].cards.map((id, index) => ({
 				id: id,
 				luid: item.destination,  
 				coord: index 
 			}))
 
-			let cards = ocards.concat(dcards)
-			const url = endpoint[urlpattern]
-			const options = {
-				method: 'PATCH',
-				body: JSON.stringify(cards),
-				headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json; charset=utf-8',
-				'X-CSRFToken': Cookies.get('csrftoken') 
-			}
+			payload = ocards.concat(dcards)
+
+		} else {
+			payload = collection[item.destination].cards.map((id, index) => ({
+				id: id,
+				luid: item.destination,
+				coord: index 
+			}))
 		}
-
-		dispatch(dataRequest())
-
-		const success = resjson => dispatch({
-			type: actionType[urlpattern],
-			data: normalize(resjson, Schemas[urlpattern])
-		})
-		const failure = error => dispatch(dataFailure(error))
-		return receiveData(url, options, success, failure)
-	} else {
-		let cards = getState().lists.collection[item.destination].cards.map((id, index) => ({
-			id: id,
-			luid: item.destination,
-			coord: index 
-		}))
-
-		const url = endpoint[urlpattern]
-		const options = {
-				method: 'PATCH',
-				body: JSON.stringify(cards),
-				headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json; charset=utf-8',
-				'X-CSRFToken': Cookies.get('csrftoken') 
-			}
-		}
-
-		dispatch(dataRequest())
-
-		const success = resjson => dispatch({
-			type: actionType[urlpattern],
-			data: normalize(resjson, Schemas[urlpattern])
-		})
-
-		const failure = error => dispatch(dataFailure(error))
-		return receiveData(url, options, success, failure)
-
 	}
-}
-}
 
-// utilities 
-const sendRequest = (method, urlpattern, item) => (dispatch) => {
+	const opt = {
+		method: 'PATCH',
+		body: JSON.stringify(payload),
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json; charset=utf-8',
+			'X-CSRFToken': Cookies.get('csrftoken')
+		}
+	}
+
+	const success = (resjson) => dispatch({ 
+		type: actionType[urlpattern],
+		data: normalize(resjson, Schemas[urlpattern])
+	})
+	const failure = (error) => dispatch(dataFailure(error))
+	const successFlash = () => dispatch(dataSuccess('Successfully updated items on the server'))
+
+	return fetchData(endpoint[urlpattern], opt, success, failure, successFlash)
+};
+
+
+// UTILITIES
+
+const fetchRequest = (method, urlpattern, item = {}, message) => (dispatch) => {
+	dispatch(dataRequest())
+
 	const url = item.id ? endpoint[urlpattern] + item.id : endpoint[urlpattern]
 	const opt = {
 		method: method,
@@ -186,68 +158,50 @@ const sendRequest = (method, urlpattern, item) => (dispatch) => {
 			'X-CSRFToken': Cookies.get('csrftoken')
 		}
 	}
-	
-	const success = (resjson) => {
-		dispatch({
+
+	const failure = (error) => dispatch(dataFailure(error))
+	const successFlash = () => message ? dispatch(dataSuccess(message)) : dispatch(dataSuccess())
+
+	if(method === 'DELETE'){
+		const success = (res) => dispatch({
+			type: actionType[urlpattern],
+			item: item 
+		})
+		
+		return fetchData(url, opt, success, failure, successFlash)
+
+	} else {
+		const success = (resjson) => dispatch({
 			type: actionType[urlpattern],
 			data: normalize(resjson, Schemas[urlpattern])
 		})
-		dispatch({
-			type: 'DATA_SUCCESS'
-		})
+
+		return fetchData(url, opt, success, failure, successFlash)
 	}
-
-	const failure = (error) => dispatch(dataFailure(error))
-	dispatch(dataRequest())
-	return receiveData(url, opt, success, failure)
-} 
+}; 
 
 
-const receiveData = (url, options, successCallback, failureCallback) => {
-	return fetch(url, options)
-			.then(response => {
-				// Django returns JSON response for 200 - 299 statuses 
-				if(response.status >= 200 && response.status < 300){
-					return response.json().then(resjson => successCallback(resjson))
-				}
-
-				// Django returns JSON response for HTTP_400_BAD_REQUEST 
-				if(response.status === 400){
-					return response.json().then(resjson => failureCallback(resjson))
-				}
-
-				// reject everything else 
-				return Promise.reject(`${response.status}: ${response.statusText}`)
-			})
-			.catch(error => failureCallback(error))
-
-}
-
-
-export const destroyAll = (urlpattern) => (dispatch) => {
-	let url = endpoint[urlpattern]
-	const failureCallback = (error) => dispatch(dataFailure(error))
-	const successCallback = (res) => {dispatch({
-				type: 'DESTROY_KANBAN'
-			}); return dispatch({ type: 'DATA_SUCCESS', message: res})}
-	let options = {
-		method: 'GET',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json; charset=utf-8',
-			'X-CSRFToken': Cookies.get('csrftoken')
-		}
-	}
-	dispatch(dataRequest())
-	return fetch(url, options)
-			.then(response => {
+const fetchData = (url, options, successCallback, failureCallback, successFlash, failFlash) =>
+	fetch(url, options)
+		.then(response => {
+			// Django returns JSON response for 200 - 299 statuses 
+			if(response.status >= 200 && response.status < 300){
+				// DELETE response
 				if(response.status === 204){
-					return successCallback(response.statusText)
+					return successCallback(response)
 				}
-				if(response.status === 400){
-					return response.json().then(resjson => failureCallback(resjson))
-				}
-				return Promise.reject(`${response.status}: ${response.statusText}`)
-			})
-			.catch(error => failureCallback(error))
-}
+				return response.json().then(resjson => successCallback(resjson))
+			}
+
+			// Django returns JSON response for HTTP_400_BAD_REQUEST 
+			if(response.status === 400){
+				return response.json().then(resjson => failureCallback(resjson))
+			}
+
+			// reject everything else 
+			return Promise.reject(`${response.status}: ${response.statusText}`)
+		})
+		.then(() => typeof successFlash === 'function' ? successFlash() : Promise.resolve('Fetch completed'))
+		.catch(error => failureCallback(error));
+
+

@@ -6,7 +6,7 @@ import { schema } from 'normalizr';
 // normalize one card 
 export const cardSchema = new schema.Entity('cards');
 
-// normalize cards array 
+// normalize array of cards 
 export const cardsSchema = [ cardSchema ];
 
 // normalize one list 
@@ -14,7 +14,7 @@ export const listSchema = new schema.Entity('lists', {
 	cards: [ cardSchema ] 
 });
 
-// normalize lists array 
+// normalize array of lists 
 export const listsSchema = [ listSchema ];
 
 

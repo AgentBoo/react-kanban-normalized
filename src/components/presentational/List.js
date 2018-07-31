@@ -23,10 +23,10 @@ class List extends Component {
     id: this.props.id, 
     label: value  
   });
-  removeList = () => this.props.deleteList({ 
+
+  removeList = () => this.props.deleteList('delete-list',{ 
     id: this.props.id 
   });
-
 
   render(){
     const { connectDragSource, connectDropTarget, isDragging } = this.props;
@@ -35,21 +35,20 @@ class List extends Component {
    
     return connectDragSource(
       connectDropTarget(
-        <div className={ isDragging ? 'list low-opacity' : 'list'}>
-          <div className='list-header'>
+        <div className={ isDragging ? 'panel list form-group low-opacity' : 'panel form-group list'}>
+          <div className='panel-body panel-inline-custom'>
             <EditableLine
-               altclassName='form-control transparent pointer'
+               altclassName='form-control form-control-plaintext'
                className='form-control editable'
                value= { label }
                submitFn = { this.editList } />
              <Button
                 bsSize='sm'
-                className='transparent'
                 onClick={ this.removeList }>
                 <Glyphicon glyph='remove' />
              </Button>
           </div>
-          <div className='list-body'>
+          <div className='panel-body'>
 
             { cardsload }
             <CardAssistant text='Add a new card...' luid={ this.props.id }/>

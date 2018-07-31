@@ -11,17 +11,19 @@ import { getLists } from './../../store/selectors';
 import List from './../containers/List';
 import ListAssistant from './ListAssistant';
 
-
 /* KANBAN COMPONENT */
 
 class Board extends Component {
-  renderList = (list, idx) => (
-    <List key={ list.label } id={ list.id } label={ list.label } index={ idx } />
+  renderList = (list) => (
+    <List
+      key={ list.id } 
+      id={ list.id } 
+      label={ list.label } />
   );
 
   render(){
-    const listsload = this.props.lists.map((list,idx) => this.renderList(list, idx))
-    console.log(this.props.index)
+    const listsload = this.props.lists.map(list => this.renderList(list))
+    
     return (
       <section className='board'>
 

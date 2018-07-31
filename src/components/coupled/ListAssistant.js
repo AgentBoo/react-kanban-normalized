@@ -6,13 +6,7 @@ import { newItem as newList } from './../../store/actions/requests';
 // components
 import { Button, Glyphicon } from 'react-bootstrap';
 
-// notes:
-// 1* old react docs (React.createClass() days...) discouraged using props to set initial state;
-//    use componentWillReceiveProps() to set initial state instead; https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e
-// 2* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
-
-
-/* Controlled one-field form with switchable visibility */
+// This component is almost exactly the same as an editable line 
 
 export class ListAssistant extends Component{
   constructor(props){
@@ -20,7 +14,8 @@ export class ListAssistant extends Component{
     this.activeInput = React.createRef();
     this.state = {
       active  : false,
-      value   : ''
+      value   : '',
+      remainder: 256
     }
   };
 
@@ -36,11 +31,14 @@ export class ListAssistant extends Component{
   passesValidation = (value) => this.props.minlen <= value.length && value.length <= this.props.maxlen;
 
   // event handlers
-  handleTyping = (event) => this.setState({ value: event.target.value });
+  handleTyping = (event) => this.setState({ 
+    value: event.target.value, 
+    remainder: 256-event.target.value.length 
+  });
 
   startTyping = (event) => {
     event.stopPropagation()
-    this.toggleTyping()
+    return this.toggleTyping()
   };
 
   handleKeyDown = (event) => {
@@ -59,21 +57,21 @@ export class ListAssistant extends Component{
     }
 
     if(this.state.value.length && this.passesValidation(this.state.value.trim())){
-       this.props.newList('new-list', { label: this.state.value})
+       this.props.newList('new-list', { 
+        label: this.state.value
+      })
     }
 
-    this.cancelTyping()
+    return this.cancelTyping()
   };
 
-
-  // 2*, 3*
   render(){
     if(!this.state.active){
       return (
-        <div className='list assistant'>
-          <div className='list-header form-group'>
+        <div className='panel list assistant form-group'>
+          <div className='panel-body'>
             <span
-               className='form-control transparent pointer'
+               className='form-control'
                onClick={ this.startTyping }>
                { this.props.text }
             </span>
@@ -83,9 +81,9 @@ export class ListAssistant extends Component{
     } else {
       return (
         <form
-           className='list'
+           className='panel list form-group'
            onSubmit={ this.handleSubmit }>
-           <div className='list-header form-group'>
+           <div className='panel-body'>
               <input
                  type='text'
                  className='form-control'
@@ -96,7 +94,7 @@ export class ListAssistant extends Component{
                  onChange={ this.handleTyping }
                  onKeyDown={ this.handleKeyDown } />
             </div>
-            <div className='list-footer'>
+            <div className='panel-footer'>
                <Button
                   bsStyle='success'
                   onClick={ this.handleSubmit }> Save </Button>
@@ -105,7 +103,8 @@ export class ListAssistant extends Component{
                   onClick={ this.cancelTyping }>
                   <Glyphicon glyph='remove' />
                </Button>
-            </div>
+               <p> { this.state.remainder } </p>
+            </div>            
         </form>
       )
     }
@@ -113,13 +112,13 @@ export class ListAssistant extends Component{
 // end component
 };
 
+
 ListAssistant.defaultProps = {
   minlen    : 1,
   maxlen    : 256
 };
 
 
-// NOTE: Redux
 ListAssistant = connect(null, { newList })(ListAssistant);
 
 export default ListAssistant;

@@ -1,16 +1,8 @@
 // react
 import React, { Component } from 'react';
 
-// notes:
-// 1* old react docs (React.createClass() days...) discouraged using props to set initial state;
-//    use componentWillReceiveProps() to set initial state instead; https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e
-// 2* make clear distinction between button type="submit" and button type="button"; https://github.com/erikras/redux-form/issues/2679
-// 3* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
+/* Editable Inline */
 
-
-// ============================================================================ //
-// Editable inline
-// ============================================================================ //
 // Component matched against React Inline Edit https://github.com/kaivi/ReactInlineEdit
 
 class EditableLine extends Component{
@@ -39,10 +31,19 @@ class EditableLine extends Component{
   };
 
   // utilities
-  cancelEditing = () => this.setState({ editable: !this.state.editable, value: this.props.value });
+  cancelEditing = () => this.setState({ 
+    editable: !this.state.editable, 
+    value: this.props.value 
+  });
   passesValidation = (value) => this.props.minlen <= value.length && value.length <= this.props.maxlen;
-  submitEditing = () => {
-    this.props.submitFn(this.state.value)
+  submitEditing = (event) => {
+     if(event){
+       event.preventDefault()
+    }
+     if(this.state.value.length && this.passesValidation(this.state.value.trim())){
+       this.props.submitFn(this.state.value)
+    }
+
     this.setState({ editable: !this.state.editable })
   };
 
@@ -51,7 +52,7 @@ class EditableLine extends Component{
 
   handleKeyDown = (event) => {
     if(event.keyCode === 13){
-      return this.stopEditing()
+      return this.submitEditing()
     }
     if(event.keyCode === 27){
       return this.cancelEditing()
@@ -60,7 +61,10 @@ class EditableLine extends Component{
 
   startEditing = (event) => {
     event.stopPropagation()
-    this.setState({ editable: !this.state.editable, value: this.props.value })
+    this.setState({ 
+        editable: !this.state.editable, 
+        value: this.props.value 
+    })
   };
 
   stopEditing = (event) => {
@@ -75,21 +79,36 @@ class EditableLine extends Component{
   render(){
     if(!this.state.editable){
       return (
-        <span className={ this.props.altclassName }
-              onClick={ this.startEditing }>
-          { this.state.value || this.props.value }
+        <span 
+            className={ this.props.altclassName }
+            onClick={ this.startEditing }>
+            { this.state.value || this.props.value }
         </span>
       )
-    } else {
-      return (
-        <input type='text'
+    } else if(this.props.textarea){
+        return (
+            <textarea
+               type='text'
                tabIndex= '0'
                className={ this.props.className }
                ref={ this.activeInput }
+               rows='8'
                value={ this.state.value }
                onBlur={ this.stopEditing }
                onChange={ this.handleTyping }
                onKeyDown={ this.handleKeyDown } />
+        )
+    } else {
+      return (
+        <input
+            type='text'
+            tabIndex= '0'
+            className={ this.props.className }
+            ref={ this.activeInput }
+            value={ this.state.value }
+            onBlur={ this.stopEditing }
+            onChange={ this.handleTyping }
+            onKeyDown={ this.handleKeyDown } />
       )
     }
   };
@@ -104,6 +123,11 @@ EditableLine.defaultProps = {
 export { EditableLine };
 
 
+// notes:
+// 1* old react docs (React.createClass() days...) discouraged using props to set initial state;
+//    use componentWillReceiveProps() to set initial state instead; https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e
+// 2* make clear distinction between button type="submit" and button type="button"; https://github.com/erikras/redux-form/issues/2679
+// 3* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
 
 // NOTE: default mode: <span>
 //       default props: minlen, maxlen

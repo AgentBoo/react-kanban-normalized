@@ -4,8 +4,7 @@ import { combineReducers } from 'redux';
 import cardsReducer from './reducers/cards';
 import listsReducer from './reducers/lists';
 
-
-/* REQUEST STATUS SECONDARY REDUCERS */
+/* ADDITIONAL SECONDARY REDUCERS */
 
 // state.isFetching reducer
 const isFetchingReducer = (state=false, action) => {
@@ -14,23 +13,24 @@ const isFetchingReducer = (state=false, action) => {
 			return true 
 		case 'DATA_SUCCESS':
 		case 'DATA_FAILURE':
-		case 'BULK_UPDATE_LIST':
-		case 'BULK_UPDATE_CARDS':
+		case 'FETCH_KANBAN':
+		case 'DELETE_KANBAN':
 			return false 
 		default:
 			return state 
 	}
 };
 
-// state.errorMessage reducer 
+ 
+// state.flassMessage reducer
 const flashMessageReducer = (state=null, action) => {
 	switch(action.type){
 		case 'DATA_REQUEST': 
 		case 'FLASH_END':
 			return null
-		case 'DATA_SUCCESS':
-			return state  
+		case 'DATA_SUCCESS':  
 		case 'DATA_FAILURE':
+		case 'DELETE_KANBAN':
 			return action.message  
 		default:
 			return state 

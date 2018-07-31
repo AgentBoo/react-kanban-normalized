@@ -3,15 +3,11 @@ export const API_ROOT = process.env.NODE_ENV === 'production' ?
                         '' : 
                         'http://127.0.0.1:8000/api/kanban';
                         
-// do not set your own 'Origin' in the headers
-export const ORIGIN = process.env.NODE_ENV === 'production' ? 
-                      '' : 
-                      'http://localhost:3000';
-
 
 // named urlpattern => endpoint mappings 
 export const endpoint = {
   'fetch-kanban'    : API_ROOT + '/board',
+  'delete-kanban'   : API_ROOT + '/kaboom',
   'new-list'        : API_ROOT + '/lists',
   'update-list'     : API_ROOT + '/lists/',
   'update-lists'    : API_ROOT + '/lists/bulk',
@@ -20,7 +16,6 @@ export const endpoint = {
   'update-card'     : API_ROOT + '/cards/',
   'update-cards'    : API_ROOT + '/cards/bulk',
   'delete-card'     : API_ROOT + '/cards/',
-  'destroy-kanban'  : API_ROOT + '/kaboom',
 };
 
 
@@ -33,6 +28,7 @@ export const actionType = {
   'data-failure'    : 'DATA_FAILURE',
   // CRUD 
   'fetch-kanban'    : 'FETCH_KANBAN',
+  'delete-kanban'   : 'DELETE_KANBAN',
   'new-list'        : 'NEW_LIST',
   'update-list'     : 'UPDATE_LIST',
   'update-lists'    : 'BULK_UPDATE_LIST',
@@ -45,15 +41,12 @@ export const actionType = {
   'displace-list'   : 'DISPLACE_LIST',
   'displace-card'   : 'DISPLACE_CARD',
   'transit-card'    : 'TRANSIT_CARD',
-  'card-dragging'   : 'CARD_DRAGGING',
-  'list-dragging'   : 'LIST_DRAGGING',
-  'destroy-kanban'  : 'DESTROY_KANBAN',
 };
 
 
 // react-dnd 
 // DragSources and DropTargets only interact if they are of the same type
 export const itemType = {
-  LIST : 'LIST',
-  CARD : 'CARD'
+  LIST: 'LIST',
+  CARD: 'CARD'
 };

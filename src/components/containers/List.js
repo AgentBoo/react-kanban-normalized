@@ -13,10 +13,11 @@ import ListComponent from './../presentational/List';
 /* LIST CONTAINER */
 
 // react-dnd DRAG SOURCE
-const dragSourceSpec = {
+const dragSource = {
   beginDrag(props, monitor){
-    const dragSource = { id: props.id }
-    return dragSource
+    return { 
+      id: props.id 
+    }
   }, 
 
   endDrag(props, monitor, component){
@@ -35,31 +36,31 @@ const collectDragProps = (connector, monitor) => ({
 
 
 // react-dnd DROP TARGET
-const dropTargetSpec = { 
+const dropTarget = { 
   drop(props, monitor){
-    const dropTarget = { 
+    return { 
       id: props.id, 
       type: 'list' 
     }
-    return dropTarget 
   },
 
   hover(props, monitor){
     const dragSource = monitor.getItem();
     const dragSourceType = monitor.getItemType();
+
     if(dragSourceType === itemType.LIST && dragSource.id === props.id){
       return
-    }
+    };
 
     if(dragSourceType === itemType.LIST && dragSource.id !== props.id){
       return window.requestAnimationFrame(() => 
         props.displaceList(dragSource.id, props.id))
-    }
+    };
 
     if(dragSourceType === itemType.CARD && dragSource.luid !== props.id && monitor.isOver({ shallow: true })){
       props.transitCard(dragSource.luid, dragSource.id, null, props.id)
       return monitor.getItem().luid = props.id
-    }
+    };
   }
 };
 
@@ -82,8 +83,8 @@ const mapDispatchToProps = {
 };
 
 
-let List = DropTarget([itemType.LIST, itemType.CARD], dropTargetSpec, collectDropProps)(ListComponent);
-    List = DragSource(itemType.LIST, dragSourceSpec, collectDragProps)(List);
+let List = DropTarget([itemType.LIST, itemType.CARD], dropTarget, collectDropProps)(ListComponent);
+    List = DragSource(itemType.LIST, dragSource, collectDragProps)(List);
     List = connect(mapStateToProps, mapDispatchToProps)(List);
 
 export default List;

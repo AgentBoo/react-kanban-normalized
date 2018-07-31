@@ -12,14 +12,13 @@ import CardComponent from './../coupled/Card';
 /* CARD CONTAINER */
 
 // react-dnd DRAG SOURCE
-const dragSourceSpec = {
+const dragSource = {
   beginDrag(props, monitor){
-    const dragSource = {
+    return {
       id     : props.id,
       origin : props.luid,
       luid   : props.luid,
     }
-    return dragSource
   },
 
   endDrag(props, monitor){
@@ -44,13 +43,12 @@ const collectDragProps = (connector, monitor) => ({
 
 
 // react-dnd DROP TARGET
-const dropTargetSpec = {
+const dropTarget = {
   drop(props, monitor){
-    const dropTarget = { 
+    return { 
       id: props.id, 
       type: 'card' 
-    }
-    return dropTarget 
+    } 
   },
 
   hover(props, monitor){
@@ -85,8 +83,8 @@ const mapDispatchToProps = {
 };
 
 
-let Card = DropTarget(itemType.CARD, dropTargetSpec, collectDropProps)(CardComponent);
-    Card = DragSource(itemType.CARD, dragSourceSpec, collectDragProps)(Card);
+let Card = DropTarget(itemType.CARD, dropTarget, collectDropProps)(CardComponent);
+    Card = DragSource(itemType.CARD, dragSource, collectDragProps)(Card);
     Card = connect(null, mapDispatchToProps)(Card);
 
 export default Card;

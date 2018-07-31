@@ -6,13 +6,7 @@ import { newItem as newCard } from './../../store/actions/requests';
 // components
 import { Button, Glyphicon } from 'react-bootstrap';
 
-// notes:
-// 1* old react docs (React.createClass() days...) discouraged using props to set initial state;
-//    use componentWillReceiveProps() to set initial state instead; https://medium.com/@justintulk/react-anti-patterns-props-in-initial-state-28687846cc2e
-// 2* string literal in ref is deprecated; https://reactjs.org/docs/refs-and-the-dom.html
-
-
-/* Controlled one-field form with switchable visibility */
+// This component is almost exactly the same as an editable area
 
 export class CardAssistant extends Component{
   constructor(props){
@@ -20,7 +14,8 @@ export class CardAssistant extends Component{
     this.activeInput = React.createRef();
     this.state = {
       active  : false,
-      value   : ''
+      value   : '',
+      remainder: 256
     }
   };
 
@@ -36,7 +31,10 @@ export class CardAssistant extends Component{
   passesValidation = (value) => this.props.minlen <= value.length && value.length <= this.props.maxlen;
 
   // event handlers
-  handleTyping = (event) => this.setState({ value: event.target.value });
+  handleTyping = (event) => this.setState({ 
+    value: event.target.value,
+    remainder: 256 - event.target.value.length 
+  });
 
   startTyping = (event) => {
     event.stopPropagation()
@@ -59,7 +57,10 @@ export class CardAssistant extends Component{
     }
 
     if(this.state.value.length && this.passesValidation(this.state.value.trim())){
-       this.props.newCard('new-card', { text: this.state.value, luid: this.props.luid })
+       this.props.newCard('new-card', { 
+        text: this.state.value, 
+        luid: this.props.luid 
+      })
     }
 
     this.cancelTyping()
@@ -70,10 +71,10 @@ export class CardAssistant extends Component{
   render(){
     if(!this.state.active){
       return (
-        <div className='card assistant'>
-          <div className='card-header form-group'>
+        <div className='panel form-group'>
+          <div className='panel-body'>
             <span
-               className='form-control transparent pointer'
+               className='form-control form-control-plaintext'
                onClick={ this.startTyping }>
                { this.props.text }
             </span>
@@ -83,9 +84,9 @@ export class CardAssistant extends Component{
     } else {
       return (
         <form
-           className='card'
+           className='panel form-group'
            onSubmit={ this.handleSubmit }>
-           <div className='card-header form-group'>
+           <div className='panel-body'>
               <textarea
                  type='text'
                  className='form-control'
@@ -97,7 +98,7 @@ export class CardAssistant extends Component{
                  onChange={ this.handleTyping }
                  onKeyDown={ this.handleKeyDown } />
             </div>
-            <div className='card-footer'>
+            <div className='panel-footer'>
                <Button
                   bsStyle='success'
                   onClick={ this.handleSubmit }> Add </Button>
@@ -114,13 +115,13 @@ export class CardAssistant extends Component{
 // end component
 };
 
+
 CardAssistant.defaultProps = {
   minlen    : 1,
   maxlen    : 256
 };
 
 
-// NOTE: Redux
 CardAssistant = connect(null, { newCard })(CardAssistant);
 
 export default CardAssistant;

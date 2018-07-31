@@ -1,4 +1,5 @@
-/* NOTE: APP WIDE */
+/* ROOT */
+
 html, body {
   height: 100%;
   margin: 0;
@@ -6,18 +7,9 @@ html, body {
   width: 100%;
 }
 
-body{
-  color: #2d3142;
-  font-family: 'Raleway', Helvetica, sans-serif;
-}
-
 header.root-header,
 footer.root-footer{
   background: #2d3142;
-  display: flex;
-    align-items: baseline;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
   height: 3.375em;
 }
 
@@ -32,12 +24,7 @@ header.root-header{
     right: 0;
     left: 0;
 }
-header.root-header button{
-  background: #4f5d75;
-  border: transparent;
-  margin-right: 0.444em;
-  outline: transparent;
-}
+
 main.root-main{
   position: absolute;
     top: 3.375em;
@@ -46,125 +33,65 @@ main.root-main{
     left: 0;
 }
 
+p,
+span,
+input, 
+textarea{
+  background: grey;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-/* ============================================================================= */
-/* NOTE: BOARD */
+
+/* BOARD */
+
 .board{
   display: flex;
-    align-items: flex-start;
     flex-flow: row nowrap;
-    justify-content: flex-start;
   height: 100%;
   overflow-x: auto;
-  padding: 1em 0.667em;
 }
 
-/* NOTE: List */
+.panel-inline-custom{
+  display: flex;
+    flex-flow: row nowrap;
+}
+
+.panel-inline-custom p,
+.panel-inline-custom span,
+.panel-inline-custom input, 
+.panel-inline-custom textarea,
+.panel-inline-custom{
+  flex: 1;
+} 
+
+
+/* LIST */
+
 .list{
-  background: #efe9e7;
-  border: solid 1px #bfc0c0;
-  /* border-radius: 4px; */
-  flex: 0 0 17.086em;
-  margin: 0.444em;
-  padding: 0.667em;
-}
-.list.assistant{
-  background: transparent;
-  border-color: transparent;
-  opacity: 0.5;
-}
-.list.assistant:hover{
-  background: #efe9e7;
+  background: pink;
+  flex: 0 0 300px;
+  margin: 0.5rem;
 }
 
-.list .list-header{
-  display: flex;
-    align-items: baseline;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-  margin-bottom: 0.444em;
-}
-.list .list-header button{
-  margin-left: 0.444em;
+
+/* CARD */
+
+.card-controls{
   position: relative;
-    right: -1px;
+    left: 0;
+  visibility: hidden;
 }
-.list .list-body{
-  display: flex;
-    align-items: stretch;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-}
-.list .list-footer{
-  display: flex;
-    align-items: baseline;
-    flex-flow: row nowrap;
-    justify-content: flex-start
-}
-.list .list-footer > button{
-  margin-right: 0.444em;
-}
-
-/* Card */
-.card{
-  background: #fff;
-  border: solid 1px #bfc0c0;
-  box-sizing: border-box;
-  color: inherit;
-  line-height: 1.6;
-  margin: 0.296em 0;
-  opacity: 1;
-  padding: 0.444em;
-  text-align: left;
-}
-.card.assistant{
-  background: transparent;
-  border-color: transparent;
-  opacity: 0.8;
-}
-.card.assistant:hover{
-  background: #fff;
-}
-
-.card .card-header{
-  display: flex;
-    align-items: center;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-  margin-bottom: 0.444em;
-}
-.card .card-body > p{
-  border: solid transparent 1px;
-  box-sizing: border-box;
-  font-size: 1em;
-  line-height: 1.46;
-  padding: 0.4em 0.84em;
-  text-align: center;
-}
-.card .card-body > .form-control{
-  overflow: hidden;
-  resize: none;
-}
-.card .card-footer button{
-  margin-right: 0.444em;
+.card-controls.visible{
+  visibility: visible;
 }
 
 
-/* ============================================================================= */
 /* NOTE: UTILITIES */
+
 .low-opacity{
   opacity: 0.25;
-}
-
-.pointer{
-  cursor: pointer;
-}
-
-.transparent{
-  background: transparent;
-  box-shadow: none;
-  border: transparent;
-  outline: transparent;
 }
 
 .is-dragging{

@@ -1,7 +1,6 @@
 // constants
 import { actionType } from './../../config/constants';
 
-
 /* OBJECT MOVING ACTION CREATORS */
 
 export const displaceList = (fromDragSourceId, overDropTargetId) => ({
