@@ -82,7 +82,6 @@ const mapDispatchToProps = {
   bulkUpdate
 };
 
-
 let Card = DropTarget(itemType.CARD, dropTarget, collectDropProps)(CardComponent);
     Card = DragSource(itemType.CARD, dragSource, collectDragProps)(Card);
     Card = connect(null, mapDispatchToProps)(Card);

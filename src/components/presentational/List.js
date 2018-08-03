@@ -11,11 +11,11 @@ import { CardAssistant } from './../coupled/CardAssistant';
 class List extends Component {
   renderCard = (card) => (
     <Card
-       key={ card.id }
-       id= { card.id }
-       luid={ card.luid }
-       text={ card.text }
-       { ...card } />
+      key={ card.id }
+      id= { card.id }
+      luid={ card.luid }
+      text={ card.text }
+      { ...card } />
   );
 
   // pass down
@@ -24,7 +24,7 @@ class List extends Component {
     label: value  
   });
 
-  removeList = () => this.props.deleteList('delete-list',{ 
+  removeList = () => this.props.deleteList('delete-list', { 
     id: this.props.id 
   });
 
@@ -35,23 +35,26 @@ class List extends Component {
    
     return connectDragSource(
       connectDropTarget(
-        <div className={ isDragging ? 'panel list form-group low-opacity' : 'panel form-group list'}>
-          <div className='panel-body panel-inline-custom'>
-            <EditableLine
-               altclassName='form-control form-control-plaintext'
-               className='form-control editable'
-               value= { label }
-               submitFn = { this.editList } />
-             <Button
+        <div className={ isDragging ? 'is-dragging' : null}>
+          <div className='list panel form-group'>
+            <div className='panel-inline-custom panel-heading'>
+              <EditableLine
+                altclassName='form-control form-control-plaintext'
+                className='form-control editable'
+                value= { label }
+                submitFn = { this.editList } />
+              <Button
                 bsSize='sm'
                 onClick={ this.removeList }>
                 <Glyphicon glyph='remove' />
-             </Button>
-          </div>
-          <div className='panel-body'>
-
-            { cardsload }
-            <CardAssistant text='Add a new card...' luid={ this.props.id }/>
+              </Button>
+            </div>
+            <div className='panel-body'>
+              { cardsload }
+              <CardAssistant
+                luid={ this.props.id } 
+                text='Add a new card...'/>
+            </div>
           </div>
         </div>
       )

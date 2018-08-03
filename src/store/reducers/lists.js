@@ -31,7 +31,7 @@ const collectionReducer = (state = {}, action) => {
     case 'FETCH_KANBAN':
       return action.data.entities.lists;
 
-    case 'DESTROY_KANBAN':
+    case 'DELETE_KANBAN':
       return {};
 
     default:
@@ -55,7 +55,7 @@ const indexReducer = (state = [], action) => {
     case 'FETCH_KANBAN':
       return action.data.result;
 
-    case 'DESTROY_KANBAN':
+    case 'DELETE_KANBAN':
       return [];
 
     default:

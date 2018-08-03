@@ -68,8 +68,9 @@ export class ListAssistant extends Component{
   render(){
     if(!this.state.active){
       return (
-        <div className='panel list assistant form-group'>
-          <div className='panel-body'>
+        <div>
+        <div className='list assistant panel form-group'>
+          <div className='panel-heading'>
             <span
                className='form-control'
                onClick={ this.startTyping }>
@@ -77,13 +78,15 @@ export class ListAssistant extends Component{
             </span>
           </div>
         </div>
+        </div>
       )
     } else {
       return (
+        <div>
         <form
-           className='panel list form-group'
+           className='list panel form-group'
            onSubmit={ this.handleSubmit }>
-           <div className='panel-body'>
+           <div className='panel-heading'>
               <input
                  type='text'
                  className='form-control'
@@ -94,18 +97,18 @@ export class ListAssistant extends Component{
                  onChange={ this.handleTyping }
                  onKeyDown={ this.handleKeyDown } />
             </div>
-            <div className='panel-footer'>
+            <div className='panel-heading'>
                <Button
-                  bsStyle='success'
-                  onClick={ this.handleSubmit }> Save </Button>
+                  bsStyle='warning'
+                  onClick={ this.handleSubmit }> Add </Button>
                <Button
                   bsStyle='primary'
                   onClick={ this.cancelTyping }>
                   <Glyphicon glyph='remove' />
                </Button>
-               <p> { this.state.remainder } </p>
             </div>            
         </form>
+        </div>
       )
     }
   };

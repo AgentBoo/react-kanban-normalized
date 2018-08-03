@@ -26,9 +26,7 @@ class Board extends Component {
     
     return (
       <section className='board'>
-
         { listsload }
-
         <ListAssistant text={ 'Add a new list...' } />
       </section>
     )
@@ -43,8 +41,7 @@ class Board extends Component {
 const mapStateToProps = (state) => ({ 
   lists: getLists(state),
   index: state.lists.index
-})
-
+});
 
 Board = DragDropContext(HTML5Backend)(Board);
 Board = connect(mapStateToProps)(Board);

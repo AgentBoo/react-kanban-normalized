@@ -25,7 +25,7 @@ const collectionReducer = (state = {}, action) => {
     case 'FETCH_KANBAN':
       return action.data.entities.cards;
 
-    case 'DESTROY_KANBAN':
+    case 'DELETE_KANBAN':
       return {};
 
     default:

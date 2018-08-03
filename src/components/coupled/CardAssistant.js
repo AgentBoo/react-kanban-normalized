@@ -71,7 +71,7 @@ export class CardAssistant extends Component{
   render(){
     if(!this.state.active){
       return (
-        <div className='panel form-group'>
+        <div className='panel assistant form-group'>
           <div className='panel-body'>
             <span
                className='form-control form-control-plaintext'
@@ -100,7 +100,7 @@ export class CardAssistant extends Component{
             </div>
             <div className='panel-footer'>
                <Button
-                  bsStyle='success'
+                  bsStyle='warning'
                   onClick={ this.handleSubmit }> Add </Button>
                <Button
                   bsStyle='primary'

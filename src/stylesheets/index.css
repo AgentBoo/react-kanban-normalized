@@ -1,59 +1,133 @@
 /* ROOT */
 
+/*
+#fcfcfd   powder 
+#fcf9e7   latte
+#d0ccd0   grey
+#948d9b   spanish
+#235789   bdazzled
+#eac435   saffron
+#03cea4   caribbean
+
+https://coolors.co/84d9fa-81f4e1-fcf9e7-235789-ff5e67
+*/
+
 html, body {
+  background: #84d9fa;
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #2980b9, #6dd5fa, #fcf9e7); 
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, #2980b9, #6dd5fa, #fcf9e7); 
   height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
 }
 
-header.root-header,
-footer.root-footer{
-  background: #2d3142;
-  height: 3.375em;
+body{
+  overflow-x: auto;
 }
 
-header.root-header{
-  display: flex;
-    align-items: center;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
+header.root-header,
+main.root-main,
+footer.root-footer{
+  display: flex;  
+  padding: 0.15em 0.75em;
+}
+
+header.root-header{  
+  align-items: flex-start;
+  color: #fcfcfd;
+  flex-flow: column nowrap;
+  justify-content: center;
   padding: 0 1.5em;
-  position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
 }
 
 main.root-main{
-  position: absolute;
-    top: 3.375em;
+  height: 100vh;
+  /* margin-top: 9.2rem; */
+}
+
+footer.root-footer{
+  align-items: center;
+  color: #eac435;
+  /* bdazzled */
+  background: rgba(35, 87, 137, 0.3);
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  position: fixed;
     right: 0;
     bottom: 0;
     left: 0;
 }
 
-p,
-span,
-input, 
-textarea{
-  background: grey;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+footer.root-footer > p{
+  margin: 0 0 0 1.25em;
+}
+
+footer.root-footer .dropdown-menu{
+  background: #fcf9e7; 
+  z-index: 1000;
+}
+
+footer.root-footer .btn,
+footer.root-footer .dropdown-toggle{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
 }
 
 
-/* BOARD */
+/* KANBAN */
 
 .board{
   display: flex;
+    align-items: stretch;
     flex-flow: row nowrap;
-  height: 100%;
-  overflow-x: auto;
+    justify-content: stretch;
+}
+
+.board > div{
+  flex: 0 0 300px;
+  margin: 0.3rem;
+  max-height: 92vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.board .panel,
+.board .panel-body,
+.board .panel-footer{
+  cursor: move;
+  margin: 2.5px 1px;
+  padding: 0.5px;
+}
+
+.board .panel-heading,
+.board .panel-footer{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
+}
+
+.board .panel-heading{
+  margin: 2.5px 3px;
+  padding: 1px;
+}
+
+.board .panel-heading > button,
+.board .panel-footer > button{
+  margin-right: 0.4rem;
 }
 
 .panel-inline-custom{
+  /* 
+    inline panel elements are all stacked in a row 
+    inline panel and its p, span, input, and textarea children 
+    are all $powder white 
+    inline panel buttons are all transparent and 
+    only change font color onhover 
+  */
   display: flex;
     flex-flow: row nowrap;
 }
@@ -63,32 +137,131 @@ textarea{
 .panel-inline-custom input, 
 .panel-inline-custom textarea,
 .panel-inline-custom{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  /* --- */
+  cursor: default;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 } 
+
+.panel-inline-custom button{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
+  color: #948d9b;
+  padding-left: 0.4rem;
+}
+
+.panel-inline-custom button:hover{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
+  /* --- */
+  color: #eac435;
+  transition: all ease-in-out 0.2s;
+}
 
 
 /* LIST */
 
 .list{
-  background: pink;
-  flex: 0 0 300px;
-  margin: 0.5rem;
+  background: #fcf9e7;
+}
+
+.list > .panel-heading span{
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.list > .panel-body{
+  display: flex;
+    align-items: stretch;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
 }
 
 
 /* CARD */
 
+.card:hover{
+  border-color: #d0ccd0;
+}
+
 .card-controls{
-  position: relative;
-    left: 0;
+  display: none;
   visibility: hidden;
 }
+
 .card-controls.visible{
+  display: block;
   visibility: visible;
 }
 
 
+/* MODAL */
+
+.modal-header-custom span.text-help{
+  color: #948d9b;
+  font-size: 0.9em;
+  position: relative;
+    top: 0.8em;
+    left: 0.8em;
+}
+
+.modal-body-custom span{
+  /* negate bootstrap */
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.modal-body-custom span:hover{
+  color: #03cea4;
+  cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.modal-footer-custom{
+  display: flex;
+    align-items: baseline;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
+.modal-footer-custom > *{
+  margin: 0 0 0 1rem;
+}
+
+.modal-footer-custom p.text-flash{
+  color: #eac435;
+}
+
+
 /* NOTE: UTILITIES */
+
+.btn-custom{
+  /* react-bootstrap's bsStyle and bsSize do not work if 
+     bsClass has a custom class */
+  background: #03cea4;
+  color: #fcfcfd;
+}
+
+.btn-custom:hover{
+  /* react-bootstrap's bsStyle and bsSize do not work if 
+     bsClass has a custom class */
+  color: #fcfcfd;
+  opacity: 0.9;
+  transition: all ease-in-out 0.2s;
+}
+
+.editable{
+  cursor: pointer;
+}
 
 .low-opacity{
   opacity: 0.25;
@@ -97,3 +270,33 @@ textarea{
 .is-dragging{
   opacity: 0.4;
 }
+
+.assistant,
+.assistant span{
+  /* negate bootstrap */
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.assistant span:hover{
+  transition: all ease-in-out 0.2s;
+}
+
+.assistant .panel-heading span{
+  color: #fcfcfd;
+}
+.assistant .panel-heading span:hover{
+  color: #235789;
+}
+
+.assistant .panel-body span{
+  color: #d0ccd0;
+}
+
+.assistant .panel-body span:hover{
+  color: #03cea4;
+}
+

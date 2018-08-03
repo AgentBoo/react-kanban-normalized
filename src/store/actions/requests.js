@@ -14,19 +14,19 @@ import { getIsFetching } from './../selectors';
 // let redux know fetching is in progress
 const dataRequest = () => ({
 	type: actionType['data-request']
-})
+});
 
 // send a success flash message to the store
 const dataSuccess = (message = 'Successfully fetched data') => ({
 	type: actionType['data-success'],
 	message: message 
-})
+});
 
 // send a failure flash message to the store 
 const dataFailure = (message = 'Something went wrong') => ({
 	type: actionType['data-failure'],
 	message: message
-})
+});
 
 
 // FETCH REQUESTS 
@@ -43,7 +43,7 @@ export const receiveInitData = (urlpattern) => (dispatch) => {
 	const failure = (error) => dispatch(dataFailure(error))
 
 	return fetchData(endpoint[urlpattern], {}, success, failure)
-}
+};
 
 // destroy everything in kanban
 export const deleteAll = (urlpattern) => (dispatch, getState) => {
@@ -61,7 +61,7 @@ export const deleteAll = (urlpattern) => (dispatch, getState) => {
 	const failure = (error) => dispatch(dataFailure(error))
 
 	return fetchData(endpoint[urlpattern], {}, success, failure)
-}
+};
 
 
 // CRUD actions
