@@ -182,14 +182,20 @@ const fetchRequest = (method, urlpattern, item = {}, message) => (dispatch) => {
 
 
 const fetchData = (url, options, successCallback, failureCallback, successFlash, failFlash) =>
+	/* 
+	  List of Django REST HTTP response statuses can be found here: 
+	  http://www.django-rest-framework.org/api-guide/status-codes/ 
+  	*/
+
 	fetch(url, options)
 		.then(response => {
 			// Django returns JSON response for 200 - 299 statuses 
 			if(response.status >= 200 && response.status < 300){
 				// DELETE response
 				if(response.status === 204){
-					return successCallback(response)
+					return response.json().then(resjson => successCallback(resjson))
 				}
+				console.log(response)
 				return response.json().then(resjson => successCallback(resjson))
 			}
 
